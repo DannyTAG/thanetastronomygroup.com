@@ -1,0 +1,123 @@
+{% load pages_tags mezzanine_tags i18n staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+    <meta name="keywords" content="{% block meta_keywords %}{% endblock %}">
+    <meta name="description" content="{% block meta_description %}{% endblock %}">
+    <title>{% block meta_title %}{% endblock %}{% if settings.SITE_TITLE %} | {{ settings.SITE_TITLE }}{% endif %}</title>
+    <link rel="shortcut icon" href="{% static "img/favicon.ico" %}">
+
+    {% ifinstalled mezzanine.blog %}
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="{% url "blog_post_feed" "rss" %}">
+    <link rel="alternate" type="application/atom+xml" title="Atom" href="{% url "blog_post_feed" "atom" %}">
+    {% endifinstalled %}
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    {% compress css %}
+    <link href="{% static "css/materialize.css" %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+    <link href="{% static "css/style.css" %}" type="text/css" rel="stylesheet" media="screen,projection"/>
+    {% block extra_css %}{% endblock %}
+    {% endcompress %}
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <header>
+        <ul id="nav-mobile" class="side-nav fixed">
+            <li class="search">
+                <div class="search-wrapper card">
+                    {% block navbar_search_form %}{% search_form "all" %}{% endblock %}
+                </div>
+            </li>
+            {% block navbar_primary_menu %}{% page_menu "pages/menus/primary.html" %}{% endblock%}
+        </ul>
+        <ul id="slide-out" class="side-nav">
+            <li class="search">
+                <div class="search-wrapper card">
+                    {% search_form "all" %}
+                </div>
+            </li>
+            {% block navbar_mobile_menu %}{% page_menu "pages/menus/mobile.html" %}{% endblock%}
+        </ul>
+    </header>
+
+    <main>
+        <div id="index-banner" class="section">
+            <nav>
+                <a href="#" data-activates="nav-mobile" class="button-collapse top-nav full hide-on-large-only"><i class="fa fa-bars"></i></a>
+                <ul class="right">
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url "logout" %}">{% trans "Logout" %}</a></li>
+                        <li><a href="{% url "profile_update" %}">{% trans "Profile" %}</a></li>
+                    {% else %}
+                        <li><a href="{% url "login" %}?next={{ request.path }}">{% trans "Login" %}</a></li>
+                        <li><a href="{% url "signup" %}?next={{ request.path }}">{% trans "Sign up" %}</a></li>
+                    {% endif %}
+                    {% if user.is_staff %}
+                        <li><a href="{% url "admin:index" %}">{% trans "Admin" %}</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <div class="container">
+                <div class="row">
+                    {% if settings.SITE_TITLE %}<h1 class="header center-on-small-only">{{ settings.SITE_TITLE }}</h1>{% endif %}</h1>
+                    {% if settings.SITE_TAGLINE %}<h4 class="header text-lighten-4 center-on-small-only shadow">{{ settings.SITE_TAGLINE }}</4>{% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="container content">
+            {% block main %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="page-footer grey darken-3">
+        <div class="container">
+            <div class="row">
+                <div class="col l6 s12">
+                    <h5 class="white-text">Company Bio</h5>
+                    <p class="grey-text text-lighten-4">We are a team of college students working on this project like it's our full time job. Any amount would help support and continue development on this project and is greatly appreciated.</p>
+                </div>
+                <div class="col l3 s12">
+                    <h5 class="white-text">Settings</h5>
+                    <ul>
+                        <li><a class="white-text" href="#!">Link 1</a></li>
+                        <li><a class="white-text" href="#!">Link 2</a></li>
+                        <li><a class="white-text" href="#!">Link 3</a></li>
+                        <li><a class="white-text" href="#!">Link 4</a></li>
+                    </ul>
+                </div>
+                <div class="col l3 s12">
+                    <h5 class="white-text">Connect</h5>
+                    <ul>
+                        <li><a class="white-text" href="#!">Link 1</a></li>
+                        <li><a class="white-text" href="#!">Link 2</a></li>
+                        <li><a class="white-text" href="#!">Link 3</a></li>
+                        <li><a class="white-text" href="#!">Link 4</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <div class="container">
+                Made by <a class="orange-text text-lighten-3" href="http://materializecss.com">Materialize</a>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--  Scripts-->
+    {% compress js %}
+    <script src="{% static "mezzanine/js/"|add:settings.JQUERY_FILENAME %}"></script>
+    <script src="{% static "js/materialize.js" %}"></script>
+    <script>
+    // Initialize collapse button
+    $(".button-collapse").sideNav();
+    </script>
+    {% block extra_js %}{% endblock %}
+    {% endcompress %}
+</body>
+</html>

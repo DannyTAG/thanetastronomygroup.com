@@ -1,0 +1,16 @@
+{% load mezzanine_tags materialize %}
+
+{% nevercache %}
+    <input type="hidden" name="referrer" value="{{ request.META.HTTP_REFERER }}">
+    {% csrf_token %}
+{% endnevercache %}
+
+{% for field in form_for_fields %}
+    {% if field.is_hidden %}
+        {{ field }}
+    {% else %}
+        <div class="input-field input_{{ field.id_for_label }} {{ field.field.type }}{% if field.errors %} has-error{% endif %}{% if field.field.required %} field-add-required{% endif %}">
+            {{ field|as_material:"s12" }}
+        </div>
+    {% endif %}
+{% endfor %}
