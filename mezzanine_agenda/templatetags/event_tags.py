@@ -203,12 +203,9 @@ def google_static_map(event, width, height, zoom):
     """
     Generates a static google map for the event location.
     """
-    marker = quote('{:.6},{:.6}'.format(event.location.lat, event.location.lon))
-    if settings.EVENT_HIDPI_STATIC_MAPS:
-        scale = 2
-    else:
-        scale = 1
-    return mark_safe("<img src='http://maps.googleapis.com/maps/api/staticmap?size={width}x{height}&scale={scale}&format=png&markers={marker}&sensor=false&zoom={zoom}' width='{width}' height='{height}' />".format(**locals()))
+    location = quote(event.location.mappable_location)
+
+    return mark_safe('<iframe width="100%%" height="450" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=%s&key=%s" allowfullscreen></iframe>' % (location, settings.GOOGLE_MAPS_API_KEY))
 
 
 @register.simple_tag(takes_context=True)
